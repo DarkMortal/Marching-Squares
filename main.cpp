@@ -9,8 +9,8 @@ int main(){
         RenderWindow window(VideoMode((level-1)*CELLWIDTH,(level-1)*CELLWIDTH),"Procedural Cave Generator",Style::Close);
         RenderTexture texture; 
         texture.create((level-1)*CELLWIDTH,(level-1)*CELLWIDTH);
-        texture.clear(Color(24,100,171,255));
-        //initializeGrid(texture);
+        texture.clear(blockColor);
+        //(texture);
         //drawPoints(texture);
         drawCave(texture);
         texture.display();
@@ -24,7 +24,7 @@ int main(){
                     return EXIT_SUCCESS;
                 }
             }
-            // Game Code goes here
+            // Game Code goes here            
         }
     }
     catch(exception exc){

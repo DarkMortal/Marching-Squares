@@ -14,11 +14,16 @@ using namespace std;
 
 vector<vector<bool>> Grid;
 
+const Color sweepColor = Color(28,35,49,255);
+const Color blockColor = Color(24,100,171,255);
+
 void gridInitialize(){
     //std::random
     random_device rd;
     mt19937 mt(rd());
-    uniform_int_distribution<int> dist(0,256);
+    //seed_seq ssq{rd()};
+    //default_random_engine eng{ssq};
+    uniform_int_distribution<int> dist(0,255);
 
     for(int i=0;i<level;i++){
         vector<bool> arr;
@@ -27,7 +32,7 @@ void gridInitialize(){
     }
 }
 
-// Jusr for Visualization
+// Just for Visualization
 void initializeGrid(RenderTexture& texture){
     for(int i=0;i<level-1;i++){
         Vertex points1[] = {
@@ -43,6 +48,7 @@ void initializeGrid(RenderTexture& texture){
     }
 }
 
+// Just for Visualization
 void drawPoints(RenderTexture& texture){
     for(int i=0;i<level;i++){
         for(int j=0;j<level;j++){
@@ -63,120 +69,149 @@ void drawCave(RenderTexture& texture){
             switch (state){
             case 1:{
                 Vertex points[] = {
-                    Vertex(Vector2f(j*CELLWIDTH,(2*i+1)*CELLWIDTH/2)),
-                    Vertex(Vector2f((2*j+1)*CELLWIDTH/2,(i+1)*CELLWIDTH))
+                    Vertex(Vector2f(j*CELLWIDTH,(2*i+1)*CELLWIDTH/2),sweepColor),
+                    Vertex(Vector2f((2*j+1)*CELLWIDTH/2,(i+1)*CELLWIDTH),sweepColor),
+                    Vertex(Vector2f(j*CELLWIDTH,(i+1)*CELLWIDTH),sweepColor)
                 };
-                texture.draw(points,2,sf::Lines);
+                texture.draw(points,3,sf::Triangles);
                 break;
             };
             case 2:{
                 Vertex points[] = {
-                    Vertex(Vector2f((2*j+1)*CELLWIDTH/2,(i+1)*CELLWIDTH)),
-                    Vertex(Vector2f((j+1)*CELLWIDTH,(2*i+1)*CELLWIDTH/2))
+                    Vertex(Vector2f((2*j+1)*CELLWIDTH/2,(i+1)*CELLWIDTH),sweepColor),
+                    Vertex(Vector2f((j+1)*CELLWIDTH,(2*i+1)*CELLWIDTH/2),sweepColor),
+                    Vertex(Vector2f((j+1)*CELLWIDTH,(i+1)*CELLWIDTH),sweepColor)
                 };
-                texture.draw(points,2,sf::Lines);
+                texture.draw(points,3,sf::Triangles);
                 break;
             };
             case 3:{
-                Vertex points[] = {
-                    Vertex(Vector2f(j*CELLWIDTH,(2*i+1)*CELLWIDTH/2)),
-                    Vertex(Vector2f((j+1)*CELLWIDTH,(2*i+1)*CELLWIDTH/2))
-                };
-                texture.draw(points,2,sf::Lines);
+                RectangleShape rect(Vector2f(CELLWIDTH,CELLWIDTH/2));
+                rect.setFillColor(sweepColor);
+                rect.setPosition(Vector2f(j*CELLWIDTH,(2*i+1)*CELLWIDTH/2));
+                texture.draw(rect);
                 break;
             };
             case 4:{
                 Vertex points[] = {
-                    Vertex(Vector2f((2*j+1)*CELLWIDTH/2,i*CELLWIDTH)),
-                    Vertex(Vector2f((j+1)*CELLWIDTH,(2*i+1)*CELLWIDTH/2))
+                    Vertex(Vector2f((2*j+1)*CELLWIDTH/2,i*CELLWIDTH),sweepColor),
+                    Vertex(Vector2f((j+1)*CELLWIDTH,(2*i+1)*CELLWIDTH/2),sweepColor),
+                    Vertex(Vector2f((j+1)*CELLWIDTH,i*CELLWIDTH),sweepColor)
                 };
-                texture.draw(points,2,sf::Lines);
+                texture.draw(points,3,sf::Triangles);
                 break;
             };
             case 5:{
-                Vertex points[] = {
-                    Vertex(Vector2f((2*j+1)*CELLWIDTH/2,i*CELLWIDTH)),
-                    Vertex(Vector2f(j*CELLWIDTH,(2*i+1)*CELLWIDTH/2)),
-                    Vertex(Vector2f((j+1)*CELLWIDTH,(2*i+1)*CELLWIDTH/2)),
-                    Vertex(Vector2f((2*j+1)*CELLWIDTH/2,(i+1)*CELLWIDTH))
-                };
-                texture.draw(points,4,sf::Lines);
+                ConvexShape shape;
+                shape.setFillColor(sweepColor);
+                shape.setPointCount(6);
+                shape.setPoint(0,Vector2f(j*CELLWIDTH,(i+1)*CELLWIDTH));
+                shape.setPoint(1,Vector2f(j*CELLWIDTH,(2*i+1)*CELLWIDTH/2));
+                shape.setPoint(2,Vector2f((2*j+1)*CELLWIDTH/2,i*CELLWIDTH));
+                shape.setPoint(3,Vector2f((j+1)*CELLWIDTH,i*CELLWIDTH));
+                shape.setPoint(4,Vector2f((j+1)*CELLWIDTH,(2*i+1)*CELLWIDTH/2));
+                shape.setPoint(5,Vector2f((2*j+1)*CELLWIDTH/2,(i+1)*CELLWIDTH));
+                texture.draw(shape);
                 break;
             };
             case 6:{
-                Vertex points[] = {
-                    Vertex(Vector2f((2*j+1)*CELLWIDTH/2,(i+1)*CELLWIDTH)),
-                    Vertex(Vector2f((2*j+1)*CELLWIDTH/2,i*CELLWIDTH))
-                };
-                texture.draw(points,2,sf::Lines);
+                RectangleShape rect(Vector2f(CELLWIDTH/2,CELLWIDTH));
+                rect.setFillColor(sweepColor);
+                rect.setPosition(Vector2f((2*j+1)*CELLWIDTH/2,i*CELLWIDTH));
+                texture.draw(rect);
                 break;
             };
             case 7:{
-                Vertex points[] = {
-                    Vertex(Vector2f((2*j+1)*CELLWIDTH/2,i*CELLWIDTH)),
-                    Vertex(Vector2f(j*CELLWIDTH,(2*i+1)*CELLWIDTH/2))
-                };
-                texture.draw(points,2,sf::Lines);
+                ConvexShape shape;
+                shape.setFillColor(sweepColor);
+                shape.setPointCount(5);
+                shape.setPoint(0,Vector2f((2*j+1)*CELLWIDTH/2,i*CELLWIDTH));
+                shape.setPoint(1,Vector2f(j*CELLWIDTH,(2*i+1)*CELLWIDTH/2));
+                shape.setPoint(2,Vector2f(j*CELLWIDTH,(i+1)*CELLWIDTH));
+                shape.setPoint(3,Vector2f((j+1)*CELLWIDTH,(i+1)*CELLWIDTH));
+                shape.setPoint(4,Vector2f((j+1)*CELLWIDTH,i*CELLWIDTH));
+                texture.draw(shape);
                 break;
             };
             case 8:{
                 Vertex points[] = {
-                    Vertex(Vector2f((2*j+1)*CELLWIDTH/2,i*CELLWIDTH)),
-                    Vertex(Vector2f(j*CELLWIDTH,(2*i+1)*CELLWIDTH/2))
+                    Vertex(Vector2f((2*j+1)*CELLWIDTH/2,i*CELLWIDTH),sweepColor),
+                    Vertex(Vector2f(j*CELLWIDTH,(2*i+1)*CELLWIDTH/2),sweepColor),
+                     Vertex(Vector2f(j*CELLWIDTH,i*CELLWIDTH),sweepColor)
                 };
-                texture.draw(points,2,sf::Lines);
+                texture.draw(points,3,sf::Triangles);
                 break;
             };
             case 9:{
-                Vertex points[] = {
-                    Vertex(Vector2f((2*j+1)*CELLWIDTH/2,(i+1)*CELLWIDTH)),
-                    Vertex(Vector2f((2*j+1)*CELLWIDTH/2,i*CELLWIDTH))
-                };
-                texture.draw(points,2,sf::Lines);
+                RectangleShape rect(Vector2f(CELLWIDTH/2,CELLWIDTH));
+                rect.setFillColor(sweepColor);
+                rect.setPosition(Vector2f(j*CELLWIDTH,i*CELLWIDTH));
+                texture.draw(rect);
                 break;
             };
             case 10:{
-                Vertex points[] = {
-                    Vertex(Vector2f((2*j+1)*CELLWIDTH/2,(i+1)*CELLWIDTH)),
-                    Vertex(Vector2f(j*CELLWIDTH,(2*i+1)*CELLWIDTH/2)),
-                    Vertex(Vector2f((j+1)*CELLWIDTH,(2*i+1)*CELLWIDTH/2)),
-                    Vertex(Vector2f((2*j+1)*CELLWIDTH/2,i*CELLWIDTH))
-                };
-                texture.draw(points,4,sf::Lines);
+                ConvexShape shape;
+                shape.setFillColor(sweepColor);
+                shape.setPointCount(6);
+                shape.setPoint(0,Vector2f(j*CELLWIDTH,i*CELLWIDTH));
+                shape.setPoint(1,Vector2f((2*j+1)*CELLWIDTH/2,i*CELLWIDTH));
+                shape.setPoint(2,Vector2f((j+1)*CELLWIDTH,(2*i+1)*CELLWIDTH/2));
+                shape.setPoint(3,Vector2f((j+1)*CELLWIDTH,(i+1)*CELLWIDTH));
+                shape.setPoint(4,Vector2f((2*j+1)*CELLWIDTH/2,(i+1)*CELLWIDTH));
+                shape.setPoint(5,Vector2f(j*CELLWIDTH,(2*i+1)*CELLWIDTH/2));        
+                texture.draw(shape);
                 break;
             };
             case 11:{
-                Vertex points[] = {
-                    Vertex(Vector2f((2*j+1)*CELLWIDTH/2,i*CELLWIDTH)),
-                    Vertex(Vector2f((j+1)*CELLWIDTH,(2*i+1)*CELLWIDTH/2))
-                };
-                texture.draw(points,2,sf::Lines);
+                ConvexShape shape;
+                shape.setFillColor(sweepColor);
+                shape.setPointCount(5);
+                shape.setPoint(0,Vector2f(j*CELLWIDTH,i*CELLWIDTH));
+                shape.setPoint(1,Vector2f((2*j+1)*CELLWIDTH/2,i*CELLWIDTH));
+                shape.setPoint(2,Vector2f((j+1)*CELLWIDTH,(2*i+1)*CELLWIDTH/2));
+                shape.setPoint(3,Vector2f((j+1)*CELLWIDTH,(i+1)*CELLWIDTH));
+                shape.setPoint(4,Vector2f(j*CELLWIDTH,(i+1)*CELLWIDTH));
+                texture.draw(shape);
                 break;
             };
             case 12:{
-                Vertex points[] = {
-                    Vertex(Vector2f(j*CELLWIDTH,(2*i+1)*CELLWIDTH/2)),
-                    Vertex(Vector2f((j+1)*CELLWIDTH,(2*i+1)*CELLWIDTH/2))
-                };
-                texture.draw(points,2,sf::Lines);
+                RectangleShape rect(Vector2f(CELLWIDTH,CELLWIDTH/2));
+                rect.setFillColor(sweepColor);
+                rect.setPosition(Vector2f(j*CELLWIDTH,i*CELLWIDTH));
+                texture.draw(rect);
                 break;
             };
             case 13:{
-                Vertex points[] = {
-                    Vertex(Vector2f((j+1)*CELLWIDTH,(2*i+1)*CELLWIDTH/2)),
-                    Vertex(Vector2f((2*j+1)*CELLWIDTH/2,(i+1)*CELLWIDTH))
-                };
-                texture.draw(points,2,sf::Lines);
+                ConvexShape shape;
+                shape.setFillColor(sweepColor);
+                shape.setPointCount(5);
+                shape.setPoint(0,Vector2f(j*CELLWIDTH,i*CELLWIDTH));
+                shape.setPoint(1,Vector2f((j+1)*CELLWIDTH,i*CELLWIDTH));
+                shape.setPoint(2,Vector2f((j+1)*CELLWIDTH,(2*i+1)*CELLWIDTH/2));
+                shape.setPoint(3,Vector2f((2*j+1)*CELLWIDTH/2,(i+1)*CELLWIDTH));
+                shape.setPoint(4,Vector2f(j*CELLWIDTH,(i+1)*CELLWIDTH));
+                texture.draw(shape);
                 break;
             };
             case 14:{
-                Vertex points[] = {
-                    Vertex(Vector2f(j*CELLWIDTH,(2*i+1)*CELLWIDTH/2)),
-                    Vertex(Vector2f((2*j+1)*CELLWIDTH/2,(i+1)*CELLWIDTH))
-                };
-                texture.draw(points,2,sf::Lines);
+                ConvexShape shape;
+                shape.setFillColor(sweepColor);
+                shape.setPointCount(5);
+                shape.setPoint(0,Vector2f(j*CELLWIDTH,i*CELLWIDTH));
+                shape.setPoint(1,Vector2f((j+1)*CELLWIDTH,i*CELLWIDTH));
+                shape.setPoint(2,Vector2f((j+1)*CELLWIDTH,(i+1)*CELLWIDTH));
+                shape.setPoint(3,Vector2f((2*j+1)*CELLWIDTH/2,(i+1)*CELLWIDTH));
+                shape.setPoint(4,Vector2f(j*CELLWIDTH,(2*i+1)*CELLWIDTH/2));
+                texture.draw(shape);
                 break;
             };
+            case 15:{
+                RectangleShape rect(Vector2f(CELLWIDTH,CELLWIDTH));
+                rect.setFillColor(sweepColor);
+                rect.setPosition(Vector2f(j*CELLWIDTH,i*CELLWIDTH));
+                texture.draw(rect);
+                break;
+            }
             default:
                 break;
             }
