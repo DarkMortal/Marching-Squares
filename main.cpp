@@ -1,4 +1,5 @@
 #include <iostream>
+#include <unistd.h>
 #include "./headers/Cell.hpp"
 using namespace std;
 
@@ -18,13 +19,26 @@ int main(){
         window.display();
         while(window.isOpen()){
             while(window.pollEvent(evt)){
-                if(evt.type == evt.Closed){
+                if(evt.type == Event::Closed){
                     window.close();
                     cout<<"Window Closed"<<endl;
                     return EXIT_SUCCESS;
                 }
+                if(evt.type == Event::KeyPressed && evt.key.code == Keyboard::S){
+                    Image img = texture.getTexture().copyToImage();
+                    img.saveToFile("./Cave.png");
+                    cout<<"Image exported Successfully"<<endl;
+                }
             }
-            // Game Code goes here            
+            // Game Code goes here
+            texture.clear(blockColor);
+            Grid.clear();
+            gridInitialize();
+            drawCave(texture);
+            usleep(50000);
+            texture.display();
+            window.draw(Sprite(texture.getTexture()));
+            window.display();        
         }
     }
     catch(exception exc){
