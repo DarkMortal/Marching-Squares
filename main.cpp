@@ -4,6 +4,7 @@
 using namespace std;
 
 int main(){
+    bool isPlay = true;
     gridInitialize();
     try{
         Event evt;
@@ -24,16 +25,25 @@ int main(){
                     cout<<"Window Closed"<<endl;
                     return EXIT_SUCCESS;
                 }
-                if(evt.type == Event::KeyPressed && evt.key.code == Keyboard::S){
-                    Image img = texture.getTexture().copyToImage();
-                    img.saveToFile("./Cave.png");
-                    cout<<"Image exported Successfully"<<endl;
+                if(evt.type == Event::KeyPressed){
+                    switch(evt.key.code){
+                        case Keyboard::S:{
+                            Image img = texture.getTexture().copyToImage();
+                            img.saveToFile("./Cave.png");
+                            cout<<"Image exported Successfully"<<endl; break;
+                        }
+                        case Keyboard::P:{
+                            isPlay = !isPlay; break;
+                        }
+                    }
                 }
             }
             // Game Code goes here
             texture.clear(blockColor);
-            Grid.clear();
-            gridInitialize();
+            if(isPlay){
+                Grid.clear();
+                gridInitialize();
+            }
             drawCave(texture);
             usleep(50000);
             texture.display();
